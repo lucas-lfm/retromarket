@@ -2,6 +2,8 @@ package br.edu.ifce.retromarket.repositories;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import br.edu.ifce.retromarket.entities.Anuncio;
@@ -18,4 +20,6 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
   List<Anuncio> findByPlataformaId(Long plataformaId);
 
   List<Anuncio> findByCategoriaId(Long categoriaId);
+
+  Page<Anuncio> findByStatusCodigoIn(List<String> statusCodigos, Pageable pageable);
 }

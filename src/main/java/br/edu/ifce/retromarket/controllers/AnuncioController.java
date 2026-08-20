@@ -3,6 +3,8 @@ package br.edu.ifce.retromarket.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,8 +35,8 @@ public class AnuncioController {
   }
 
   @GetMapping
-  public List<AnuncioResponseDTO> listarAnuncios() {
-    return service.listarAnuncios();
+  public Page<AnuncioResponseDTO> listarAnuncios(Pageable pageable) {
+    return service.listarAnuncios(pageable);
   }
 
 }

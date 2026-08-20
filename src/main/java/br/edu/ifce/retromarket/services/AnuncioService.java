@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifce.retromarket.dtos.AnuncioResponseDTO;
@@ -23,16 +25,12 @@ public class AnuncioService {
   @Autowired
   private CompletudeRepository repository;
 
-  public List<AnuncioResponseDTO> listarAnuncios() {
-    List<Anuncio> anuncios = anuncioRepository.findAll();
+  public Page<AnuncioResponseDTO> listarAnuncios(Pageable pageable) {
+    Page<Anuncio> anuncios = anuncioRepository.findAll(pageable);
 
-    List<AnuncioResponseDTO> anunciosDTO = new ArrayList<>();
+    Page<AnuncioResponseDTO> pageDTO = anuncios.map(this::toAnuncioReponseDTO);
 
-    for (Anuncio anuncio : anuncios) {
-      anunciosDTO.add(toAnuncioReponseDTO(anuncio));
-    }
-
-    return anunciosDTO;
+    return pageDTO;
 
   }
 

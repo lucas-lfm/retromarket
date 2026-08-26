@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import br.edu.ifce.retromarket.controllers.exceptions.ResourceNotFoundException;
 import br.edu.ifce.retromarket.dtos.AnuncioDetalhesDTO;
 import br.edu.ifce.retromarket.dtos.AnuncioRequestDTO;
 import br.edu.ifce.retromarket.dtos.AnuncioResponseDTO;
@@ -71,9 +72,13 @@ public class AnuncioService {
 
   }
 
-  public Optional<AnuncioDetalhesDTO> buscarPorId(Long id) {
+  public AnuncioDetalhesDTO buscarPorId(Long id) {
     Optional<Anuncio> anuncio = anuncioRepository.findById(id);
-    return anuncio.map(this::toAnuncioDTO);
+
+    if (anuncio.isEmpty())
+      throw new ResourceNotFoundException("Anúncio não encontrado.");
+
+    return toAnuncioDTO(anuncio.get());
   }
 
   public AnuncioDetalhesDTO criarAnuncio(AnuncioRequestDTO anuncioDTO) {
@@ -159,27 +164,27 @@ public class AnuncioService {
   private Anuncio toAnuncioEntity(AnuncioRequestDTO anuncioDTO) {
     Usuario usuario = usuarioRepository
         .findById(anuncioDTO.getIdUsuario())
-        .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+        .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
     Categoria categoria = categoriaRepository
         .findById(anuncioDTO.getIdCategoria())
-        .orElseThrow(() -> new RuntimeException("Categoria não encontrado."));
+        .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada."));
 
     Plataforma plataforma = plataformaRepository
         .findById(anuncioDTO.getIdPlataforma())
-        .orElseThrow(() -> new RuntimeException("Plataforma não encontrado."));
+        .orElseThrow(() -> new ResourceNotFoundException("Plataforma não encontrada."));
 
     Completude completude = completudeRepository
         .findById(anuncioDTO.getCodigoCompletude())
-        .orElseThrow(() -> new RuntimeException("Completude não encontrado."));
+        .orElseThrow(() -> new ResourceNotFoundException("Completude não encontrada."));
 
     Condicao condicao = condicaoRepository
         .findById(anuncioDTO.getCodigoCondicao())
-        .orElseThrow(() -> new RuntimeException("Condição não encontrado."));
+        .orElseThrow(() -> new ResourceNotFoundException("Condição não encontrada."));
 
     StatusAnuncio status = statusRepository
         .findById(anuncioDTO.getCodigoStatus())
-        .orElseThrow(() -> new RuntimeException("Status não encontrado."));
+        .orElseThrow(() -> new ResourceNotFoundException("Status não encontrado."));
 
     Anuncio anuncio = new Anuncio();
 

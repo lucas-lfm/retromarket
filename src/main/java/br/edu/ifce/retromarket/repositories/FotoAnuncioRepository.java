@@ -9,4 +9,6 @@ import br.edu.ifce.retromarket.entities.FotoAnuncio;
 public interface FotoAnuncioRepository extends JpaRepository<FotoAnuncio, Long> {
 
   List<FotoAnuncio> findByAnuncioIdOrderByOrdemAsc(Long anuncioId);
+
+  void deleteAllByAnuncioId(Long anuncioId);
 }

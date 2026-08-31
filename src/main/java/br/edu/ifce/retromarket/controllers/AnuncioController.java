@@ -22,6 +22,7 @@ import br.edu.ifce.retromarket.dtos.AnuncioResponseDTO;
 import br.edu.ifce.retromarket.entities.Anuncio;
 import br.edu.ifce.retromarket.entities.Completude;
 import br.edu.ifce.retromarket.services.AnuncioService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/anuncios")
@@ -53,7 +54,7 @@ public class AnuncioController {
   }
 
   @PostMapping
-  public ResponseEntity<AnuncioDetalhesDTO> criarAnuncio(@RequestBody AnuncioRequestDTO anuncioDTO) {
+  public ResponseEntity<AnuncioDetalhesDTO> criarAnuncio(@Valid @RequestBody AnuncioRequestDTO anuncioDTO) {
     AnuncioDetalhesDTO anuncioCriado = service.criarAnuncio(anuncioDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(anuncioCriado);
   }

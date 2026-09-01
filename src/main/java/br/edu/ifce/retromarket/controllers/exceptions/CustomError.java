@@ -12,13 +12,6 @@ public class CustomError {
   public CustomError() {
   }
 
-  public CustomError(Instant timestamp, int status, String error, String path) {
-    this.timestamp = timestamp;
-    this.status = status;
-    this.error = error;
-    this.path = path;
-  }
-
   public Instant getTimestamp() {
     return timestamp;
   }

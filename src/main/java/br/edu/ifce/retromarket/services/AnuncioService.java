@@ -1,5 +1,6 @@
 package br.edu.ifce.retromarket.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.edu.ifce.retromarket.controllers.exceptions.ResourceNotFoundException;
 import br.edu.ifce.retromarket.dtos.AnuncioDetalhesDTO;
@@ -75,17 +77,39 @@ public class AnuncioService {
   public AnuncioDetalhesDTO buscarPorId(Long id) {
     Optional<Anuncio> anuncio = anuncioRepository.findById(id);
 
-    if (anuncio.isEmpty())
+    if (anuncio.isEmpty()) {
       throw new ResourceNotFoundException("Anúncio não encontrado.");
+    }
 
     return toAnuncioDTO(anuncio.get());
   }
 
+  @Transactional
   public AnuncioDetalhesDTO criarAnuncio(AnuncioRequestDTO anuncioDTO) {
     Anuncio anuncio = toAnuncioEntity(anuncioDTO);
     Anuncio anuncioCriado = anuncioRepository.save(anuncio);
 
     return toAnuncioDTO(anuncioCriado);
+  }
+
+  @Transactional
+  public AnuncioDetalhesDTO atualizarAnuncio(AnuncioRequestDTO anuncioDTO, Long id) {
+    Anuncio anuncioPersistido = anuncioRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Anúncio não encontrado."));
+
+    Anuncio anuncioDados = toAnuncioEntity(anuncioDTO);
+
+    anuncioPersistido.setTitulo(anuncioDados.getTitulo());
+    anuncioPersistido.setDescricao(anuncioDados.getDescricao());
+    anuncioPersistido.setPreco(anuncioDados.getPreco());
+    anuncioPersistido.setPlataforma(anuncioDados.getPlataforma());
+    anuncioPersistido.setCategoria(anuncioDados.getCategoria());
+    anuncioPersistido.setCondicao(anuncioDados.getCondicao());
+    anuncioPersistido.setCompletude(anuncioDados.getCompletude());
+    anuncioPersistido.setLocalizacao(anuncioDados.getLocalizacao());
+    anuncioPersistido.setDataAtualizacao(LocalDateTime.now());
+
+    return toAnuncioDTO(anuncioPersistido);
   }
 
   public Completude criarCompletude(Completude completude) {
@@ -199,6 +223,10 @@ public class AnuncioService {
     anuncio.setDescricao(anuncioDTO.getDescricao());
     anuncio.setLocalizacao(anuncioDTO.getLocalizacao());
     anuncio.setPreco(anuncioDTO.getPreco());
+
+    if (anuncioDTO.getUrlsFotos() == null) {
+      return anuncio;
+    }
 
     List<FotoAnuncio> fotos = new ArrayList<>();
 
